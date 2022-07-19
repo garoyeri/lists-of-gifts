@@ -94,10 +94,10 @@ export default function LoginPage() {
     <div className="flex min-h-full flex-col justify-center">
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6" noValidate>
-          <div>
+          <div className="form-control">
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="label-text"
             >
               Email address
             </label>
@@ -112,20 +112,20 @@ export default function LoginPage() {
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="input input-bordered w-full px-2 py-1 text-lg"
               />
               {actionData?.errors?.email && (
-                <div className="pt-1 text-red-700" id="email-error">
+                <div className="pt-1 text-error" id="email-error">
                   {actionData.errors.email}
                 </div>
               )}
             </div>
           </div>
 
-          <div>
+          <div className="form-control">
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="label-text"
             >
               Password
             </label>
@@ -138,10 +138,10 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby="password-error"
-                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+                className="input input-bordered w-full px-2 py-1 text-lg"
               />
               {actionData?.errors?.password && (
-                <div className="pt-1 text-red-700" id="password-error">
+                <div className="pt-1 text-error" id="password-error">
                   {actionData.errors.password}
                 </div>
               )}
@@ -151,7 +151,7 @@ export default function LoginPage() {
           <input type="hidden" name="redirectTo" value={redirectTo} />
           <button
             type="submit"
-            className="w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+            className="w-full btn btn-primary"
           >
             Log in
           </button>
@@ -161,19 +161,19 @@ export default function LoginPage() {
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 checkbox"
               />
               <label
                 htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
+                className="ml-2 label-text"
               >
                 Remember me
               </label>
             </div>
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-neutral">
               Don't have an account?{" "}
               <Link
-                className="text-blue-500 underline"
+                className="link link-primary"
                 to={{
                   pathname: "/join",
                   search: searchParams.toString(),
