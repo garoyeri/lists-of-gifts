@@ -4,20 +4,20 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
-// import { getNoteListItems } from "~/models/note.server";
+import { getGiftLists } from "~/models/list.server";
 
-// type LoaderData = {
-//   noteListItems: Awaited<ReturnType<typeof getNoteListItems>>;
-// };
+type LoaderData = {
+  giftLists: Awaited<ReturnType<typeof getGiftLists>>;
+};
 
-// export const loader: LoaderFunction = async ({ request }) => {
-//   const userId = await requireUserId(request);
-//   const noteListItems = await getNoteListItems({ userId });
-//   return json<LoaderData>({ noteListItems });
-// };
+export const loader: LoaderFunction = async ({ request }) => {
+  const userId = await requireUserId(request);
+  const giftLists = await getGiftLists({ userId });
+  return json<LoaderData>({ giftLists: giftLists });
+};
 
 export default function ListsPage() {
-  //const data = useLoaderData() as LoaderData;
+  const data = useLoaderData() as LoaderData;
   const user = useUser();
 
   return (
@@ -47,32 +47,26 @@ export default function ListsPage() {
           
           <div className="block p-4 text-xl">My lists</div>
 
-          <ol>
-            <li className="block py-1 px-4 text-l">List 1</li>
-            <li className="block py-1 px-4 text-l">List 2</li>
-            <li className="block py-1 px-4 text-l">List 3</li>
-          </ol>
-
-          <div className="block border-t p-4 text-xl">Shared lists</div>
-
-          {/* {data.noteListItems.length === 0 ? (
-            <p className="p-4">No lists yet</p>
+          {data.giftLists.length === 0 ? (
+            <p className="block py-1 px-4 text-l">No lists yet</p>
           ) : (
             <ol>
-              {data.noteListItems.map((note) => (
-                <li key={note.id}>
+              {data.giftLists.map((list) => (
+                <li key={list.id}>
                   <NavLink
                     className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
+                      `block py-1 px-4 text-l ${isActive ? "bg-white" : ""}`
                     }
-                    to={note.id}
+                    to={list.id}
                   >
-                    📝 {note.title}
+                    📝 {list.title}
                   </NavLink>
                 </li>
               ))}
             </ol>
-          )} */}
+          )}
+
+          <div className="block border-t p-4 text-xl">Shared lists</div>
         </div>
 
         <div className="flex-1 p-6">
