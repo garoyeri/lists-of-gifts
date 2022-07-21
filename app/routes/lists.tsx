@@ -59,7 +59,7 @@ export default function ListsPage() {
                     }
                     to={list.id}
                   >
-                    📝 {list.title}
+                    📃 {list.title}
                   </NavLink>
                 </li>
               ))}
