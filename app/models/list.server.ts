@@ -19,18 +19,34 @@ export function createGiftList({
       title,
       user: {
         connect: {
-          id: userId
-        }
-      }
-    }
+          id: userId,
+        },
+      },
+    },
   });
 }
 
 export function getGiftList({
-  userId, listId
-}: { userId: User["id"], listId: GiftList["id"] }) {
+  userId,
+  listId,
+}: {
+  userId: User["id"];
+  listId: GiftList["id"];
+}) {
   return prisma.giftList.findFirst({
-    select: { id: true, title: true },
+    select: {
+      id: true,
+      title: true,
+      items: {
+        select: {
+          id: true,
+          title: true,
+          url: true,
+          imageUrl: true,
+          details: true,
+        },
+      },
+    },
     where: { id: listId, userId },
   });
 }
