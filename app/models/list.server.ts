@@ -25,3 +25,12 @@ export function createGiftList({
     }
   });
 }
+
+export function getGiftList({
+  userId, listId
+}: { userId: User["id"], listId: GiftList["id"] }) {
+  return prisma.giftList.findFirst({
+    select: { id: true, title: true },
+    where: { id: listId, userId },
+  });
+}
