@@ -37,8 +37,8 @@ export default function ListsPage() {
         </Form>
       </header>
 
-      <main className="flex h-full bg-base-100">
-        <div className="h-full w-80 border-r bg-base-200">
+      <main className="flex bg-base-100 overflow-hidden">
+        <div className="sm:w-60 border-r bg-base-200 overflow-y-auto">
           <Link to="new" className="block p-4 text-xl text-primary">
             + New List
           </Link>
@@ -69,7 +69,7 @@ export default function ListsPage() {
           <div className="block border-t p-4 text-xl">Shared lists</div>
         </div>
 
-        <div className="flex-1 p-6">
+        <div className="flex-1 p-6 overflow-y-scroll">
           <Outlet />
         </div>
       </main>
