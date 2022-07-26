@@ -47,10 +47,15 @@ model GiftList {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @db.VarChar(255)
+
+  items GiftListItem[]
 }
 
 model GiftListItem {
-  id       String @id @default(cuid()) @db.VarChar(255)
+  id     String   @id @default(cuid()) @db.VarChar(255)
+  listId String   @db.VarChar(255)
+  list   GiftList @relation(fields: [listId], references: [id])
+
   title    String @db.VarChar(255)
   url      String @db.VarChar(2048)
   imageUrl String @db.VarChar(2048)
