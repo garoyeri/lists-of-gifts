@@ -69,3 +69,12 @@ export function useUser(): User {
 export function validateEmail(email: unknown): email is string {
   return typeof email === "string" && email.length > 3 && email.includes("@");
 }
+
+export function validateUrl(url: unknown): URL | undefined {
+  if (typeof url !== "string") return undefined;
+  try {
+    return new URL(url);
+  } catch {
+    return undefined;
+  }
+}
