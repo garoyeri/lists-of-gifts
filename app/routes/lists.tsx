@@ -37,7 +37,7 @@ export default function ListsPage() {
         </Form>
       </header>
 
-      <main className="flex bg-base-100 overflow-hidden">
+      <main className="flex bg-base-100 overflow-hidden h-full">
         <div className="sm:w-60 border-r bg-base-200 overflow-y-auto">
           <Link to="new" className="block p-4 text-xl text-primary">
             + New List
