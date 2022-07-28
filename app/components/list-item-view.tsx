@@ -10,7 +10,9 @@ export default function GiftListItemView({
 }) {
     return (
         <div className="card card-compact bg-base-100 shadow-xl">
-            <figure><img src={item.imageUrl} alt={item.title} /></figure>
+            {item.imageUrl ? (
+                <figure><img src={item.imageUrl} alt={item.title} /></figure>
+            ) : undefined}
             <div className="card-body">
                 <h2 className="card-title">{item.title}</h2>
                 <p>{item.details}</p>
@@ -18,7 +20,9 @@ export default function GiftListItemView({
                     {isOwner ? (
                         <Link to={`edit/${item.id}`} className="btn btn-secondary">Edit</Link>
                     ) : null}
-                    <a href={item.url} className="btn btn-primary">Buy Now</a>
+                    {item.url ? (
+                        <a href={item.url} className="btn btn-primary">Buy Now</a>
+                    ) : undefined}
                 </div>
             </div>
         </div>
