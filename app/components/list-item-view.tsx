@@ -20,7 +20,7 @@ export default function GiftListItemView({
         <p>{item.details}</p>
         <div className="card-actions justify-end">
           {isOwner ? (
-            <Link to={`edit/${item.id}`} className="btn btn-secondary">
+            <Link to={`items/${item.id}`} className="btn btn-secondary">
               Edit
             </Link>
           ) : null}

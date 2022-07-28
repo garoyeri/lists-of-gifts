@@ -40,66 +40,15 @@ export default function ListDetailsPage() {
       </div>
       <div className="container">
         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "https://www.google.com",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={true}
-          />
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={true}
-          />
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={true}
-          />
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={true}
-          />
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={true}
-          />
-          <GiftListItemView
-            item={{
-              title: "Item 1",
-              id: "123",
-              details: "abc",
-              url: "",
-              imageUrl: "https://placeimg.com/400/225/arch",
-            }}
-            isOwner={false}
-          />
+          {data.list.items.map(item => {
+            return (
+              <GiftListItemView
+                key={item.id}
+                item={item}
+                isOwner={true}
+              />          
+            );
+          })}
         </div>
       </div>
     </div>
