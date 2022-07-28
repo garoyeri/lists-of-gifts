@@ -2,6 +2,7 @@ import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import Input from "~/components/input";
+import { createGiftListItem } from "~/models/list.server";
 import { requireUserId } from "~/session.server";
 import { validateUrl } from "~/utils";
 
@@ -9,13 +10,13 @@ type ActionData = {
     formError?: string;
     errors?: {
         title?: string;
-        detail?: string;
+        details?: string;
         url?: string;
         imageUrl?: string;
     };
     fields?: {
         title: string;
-        detail: string;
+        details: string;
         url: string;
         imageUrl: string;
     }
@@ -30,7 +31,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     const title = form.get("title");
     const url = form.get("url");
     const imageUrl = form.get("imageUrl");
-    const detail = form.get("detail");
+    const details = form.get("details");
 
     const listId = params.listId;
 
@@ -46,19 +47,26 @@ export const action: ActionFunction = async ({ request, params }) => {
         title: title.length < 1 ? "Cannot be blank" : undefined,
         url: url && typeof cleanUrl === "undefined" ? "Must be a valid URL" : undefined,
         imageUrl: imageUrl && typeof cleanImageUrl === "undefined" ? "Must be a valid URL" : undefined,
-        detail: typeof detail === "string" && detail.length >= 8192 ? "Too much detail, dumb it down to 8192 characters please." : undefined,
+        details: typeof details === "string" && details.length >= 8192 ? "Too much detail, dumb it down to 8192 characters please." : undefined,
     };
 
     const fields = {
         title,
         url: url as string,
         imageUrl: imageUrl as string,
-        detail: detail as string,
+        details: details as string,
     };
 
     if (Object.values(errors).some(Boolean)) {
         return badRequest({ errors, fields });
     }
+
+    await createGiftListItem({ userId, listId, item: {
+        title,
+        url: cleanUrl?.toString() ?? null,
+        imageUrl: cleanImageUrl?.toString() ?? null,
+        details: (details as string) ?? null,
+    }})
 
     return redirect(`/lists/${listId}`);
 };
@@ -97,17 +105,17 @@ export default function NewListItem() {
 
 
                 <div className="form-control">
-                    <label className="label" htmlFor="detail">
+                    <label className="label" htmlFor="details">
                         <span className="label-text text-lg">Details: </span>
                     </label>
-                    <textarea name="detail" id="detail" rows={4} className="textarea textarea-bordered"
-                        aria-invalid={actionData?.errors?.detail ? true : undefined}
+                    <textarea name="details" id="details" rows={4} className="textarea textarea-bordered"
+                        aria-invalid={actionData?.errors?.details ? true : undefined}
                         aria-errormessage={
-                            actionData?.errors?.detail ? "detail-error" : undefined}
+                            actionData?.errors?.details ? "details-error" : undefined}
                     ></textarea>
-                    {actionData?.errors?.detail && (
-                        <div className="pt-1 text-error" id="detail-error">
-                            {actionData.errors.detail}
+                    {actionData?.errors?.details && (
+                        <div className="pt-1 text-error" id="details-error">
+                            {actionData.errors.details}
                         </div>
                     )}
                 </div>

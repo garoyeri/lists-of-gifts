@@ -50,3 +50,26 @@ export function getGiftList({
     where: { id: listId, userId },
   });
 }
+
+export async function createGiftListItem({
+  userId,
+  listId,
+  item
+} : {
+  userId: User["id"];
+  listId: GiftListItem["listId"];
+  item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
+}) {
+  const listFound = await prisma.giftList.findFirst({
+    select: { id: true },
+    where: { id: listId, userId },
+  });
+  if (!listFound) return undefined;
+
+  return await prisma.giftListItem.create({
+    data: {
+      ...item,
+      listId
+    }
+  });
+}

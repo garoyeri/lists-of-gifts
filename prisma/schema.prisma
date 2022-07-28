@@ -56,8 +56,8 @@ model GiftListItem {
   listId String   @db.VarChar(255)
   list   GiftList @relation(fields: [listId], references: [id])
 
-  title    String @db.VarChar(255)
-  url      String @db.VarChar(2048)
-  imageUrl String @db.VarChar(2048)
-  details  String @db.VarChar(8192)
+  title    String  @db.VarChar(255)
+  url      String? @db.VarChar(2048)
+  imageUrl String? @db.VarChar(2048)
+  details  String? @db.VarChar(8192)
 }
