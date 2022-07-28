@@ -54,8 +54,8 @@ export function getGiftList({
 export async function createGiftListItem({
   userId,
   listId,
-  item
-} : {
+  item,
+}: {
   userId: User["id"];
   listId: GiftListItem["listId"];
   item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
@@ -69,7 +69,7 @@ export async function createGiftListItem({
   return await prisma.giftListItem.create({
     data: {
       ...item,
-      listId
-    }
+      listId,
+    },
   });
 }

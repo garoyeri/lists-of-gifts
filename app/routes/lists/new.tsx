@@ -1,4 +1,4 @@
-import type { ActionFunction} from "@remix-run/node";
+import type { ActionFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import { createGiftList } from "~/models/list.server";
@@ -12,7 +12,7 @@ type ActionData = {
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  
+
   const formData = await request.formData();
   const title = formData.get("title");
 
@@ -25,21 +25,19 @@ export const action: ActionFunction = async ({ request }) => {
 
   const list = await createGiftList({ title, userId });
   return redirect(`/lists/${list.id}`);
-}
+};
 
 export default function NewListPage() {
   const actionData = useActionData() as ActionData;
   return (
-    <Form
-      method="post"
-      className="flex flex-col gap-8 w-full"
-    >
+    <Form method="post" className="flex w-full flex-col gap-8">
       <div className="form-control">
         <label className="label" htmlFor="title">
           <span className="label-text text-lg">Title: </span>
         </label>
         <input
-          name="title" id="title"
+          name="title"
+          id="title"
           className="input input-bordered input-lg"
           aria-invalid={actionData?.errors?.title ? true : undefined}
           aria-errormessage={
@@ -54,10 +52,7 @@ export default function NewListPage() {
       </div>
 
       <div className="text-left">
-        <button
-          type="submit"
-          className="btn btn-primary btn-lg"
-        >
+        <button type="submit" className="btn btn-primary btn-lg">
           Save
         </button>
       </div>

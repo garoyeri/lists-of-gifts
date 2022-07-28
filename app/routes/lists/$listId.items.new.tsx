@@ -8,118 +8,130 @@ import { requireUserId } from "~/session.server";
 import { validateUrl } from "~/utils";
 
 type ActionData = {
-    formError?: string;
-    errors?: {
-        title?: string;
-        details?: string;
-        url?: string;
-        imageUrl?: string;
-    };
-    fields?: {
-        title: string;
-        details: string;
-        url: string;
-        imageUrl: string;
-    }
+  formError?: string;
+  errors?: {
+    title?: string;
+    details?: string;
+    url?: string;
+    imageUrl?: string;
+  };
+  fields?: {
+    title: string;
+    details: string;
+    url: string;
+    imageUrl: string;
+  };
 };
 
 const badRequest = (data: ActionData) => json(data, { status: 400 });
 
 export const action: ActionFunction = async ({ request, params }) => {
-    const userId = await requireUserId(request);
-    const form = await request.formData();
+  const userId = await requireUserId(request);
+  const form = await request.formData();
 
-    const title = form.get("title");
-    const url = form.get("url");
-    const imageUrl = form.get("imageUrl");
-    const details = form.get("details");
+  const title = form.get("title");
+  const url = form.get("url");
+  const imageUrl = form.get("imageUrl");
+  const details = form.get("details");
 
-    const listId = params.listId;
+  const listId = params.listId;
 
-    if (typeof title !== "string" ||
-        typeof listId !== "string") {
-        return badRequest({ formError: "Form not submitted correctly" });
-    }
+  if (typeof title !== "string" || typeof listId !== "string") {
+    return badRequest({ formError: "Form not submitted correctly" });
+  }
 
-    const cleanUrl = validateUrl(url);
-    const cleanImageUrl = validateUrl(imageUrl);
+  const cleanUrl = validateUrl(url);
+  const cleanImageUrl = validateUrl(imageUrl);
 
-    const errors = {
-        title: title.length < 1 ? "Cannot be blank" : undefined,
-        url: url && typeof cleanUrl === "undefined" ? "Must be a valid URL" : undefined,
-        imageUrl: imageUrl && typeof cleanImageUrl === "undefined" ? "Must be a valid URL" : undefined,
-        details: typeof details === "string" && details.length >= 8192 ? "Too much detail, dumb it down to 8192 characters please." : undefined,
-    };
+  const errors = {
+    title: title.length < 1 ? "Cannot be blank" : undefined,
+    url:
+      url && typeof cleanUrl === "undefined"
+        ? "Must be a valid URL"
+        : undefined,
+    imageUrl:
+      imageUrl && typeof cleanImageUrl === "undefined"
+        ? "Must be a valid URL"
+        : undefined,
+    details:
+      typeof details === "string" && details.length >= 8192
+        ? "Too much detail, dumb it down to 8192 characters please."
+        : undefined,
+  };
 
-    const fields = {
-        title,
-        url: url as string,
-        imageUrl: imageUrl as string,
-        details: details as string,
-    };
+  const fields = {
+    title,
+    url: url as string,
+    imageUrl: imageUrl as string,
+    details: details as string,
+  };
 
-    if (Object.values(errors).some(Boolean)) {
-        return badRequest({ errors, fields });
-    }
+  if (Object.values(errors).some(Boolean)) {
+    return badRequest({ errors, fields });
+  }
 
-    await createGiftListItem({ userId, listId, item: {
-        title,
-        url: cleanUrl?.toString() ?? null,
-        imageUrl: cleanImageUrl?.toString() ?? null,
-        details: (details as string) ?? null,
-    }})
+  await createGiftListItem({
+    userId,
+    listId,
+    item: {
+      title,
+      url: cleanUrl?.toString() ?? null,
+      imageUrl: cleanImageUrl?.toString() ?? null,
+      details: (details as string) ?? null,
+    },
+  });
 
-    return redirect(`/lists/${listId}`);
+  return redirect(`/lists/${listId}`);
 };
 
 export default function NewListItem() {
-    const actionData = useActionData() as ActionData;
-    return (
-        <>
-            <div className="flex align-baseline mb-4">
-                <h3 className="text-2xl font-bold w-full">New Gift List Item</h3>
-            </div>
-            {actionData?.formError && (
-                <div className="pt-1 text-error" id="form-error">
-                    {actionData.formError}
-                </div>
-            )}
-            <Form
-                method="post"
-                className="flex flex-col gap-8 w-full">
+  const actionData = useActionData() as ActionData;
+  return (
+    <>
+      <div className="mb-4 flex align-baseline">
+        <h3 className="w-full text-2xl font-bold">New Gift List Item</h3>
+      </div>
+      {actionData?.formError && (
+        <div className="pt-1 text-error" id="form-error">
+          {actionData.formError}
+        </div>
+      )}
+      <Form method="post" className="flex w-full flex-col gap-8">
+        <Input
+          id="title"
+          label="Item Summary:"
+          error={actionData?.errors?.title}
+          field={actionData?.fields?.title}
+          required={true}
+        />
 
-                <Input
-                    id="title" label="Item Summary:"
-                    error={actionData?.errors?.title}
-                    field={actionData?.fields?.title}
-                    required={true} />
+        <Input
+          id="url"
+          label="Item Link:"
+          error={actionData?.errors?.url}
+          field={actionData?.fields?.url}
+        />
 
-                <Input
-                    id="url" label="Item Link:"
-                    error={actionData?.errors?.url}
-                    field={actionData?.fields?.url} />
+        <Input
+          id="imageUrl"
+          label="Item Image Link:"
+          error={actionData?.errors?.imageUrl}
+          field={actionData?.fields?.imageUrl}
+        />
 
-                <Input
-                    id="imageUrl" label="Item Image Link:"
-                    error={actionData?.errors?.imageUrl}
-                    field={actionData?.fields?.imageUrl} />
+        <InputTextarea
+          id="details"
+          label="Details:"
+          error={actionData?.errors?.details}
+          field={actionData?.fields?.details}
+        />
 
-
-                <InputTextarea
-                    id="details" label="Details:"
-                    error={actionData?.errors?.details}
-                    field={actionData?.fields?.details} />
-
-                <div className="text-left">
-                    <button
-                        type="submit"
-                        className="btn btn-primary btn-lg"
-                    >
-                        Save
-                    </button>
-                </div>
-            </Form>
-
-        </>
-    );
+        <div className="text-left">
+          <button type="submit" className="btn btn-primary btn-lg">
+            Save
+          </button>
+        </div>
+      </Form>
+    </>
+  );
 }

@@ -95,10 +95,7 @@ export default function LoginPage() {
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6" noValidate>
           <div className="form-control">
-            <label
-              htmlFor="email"
-              className="label-text"
-            >
+            <label htmlFor="email" className="label-text">
               Email address
             </label>
             <div className="mt-1">
@@ -123,10 +120,7 @@ export default function LoginPage() {
           </div>
 
           <div className="form-control">
-            <label
-              htmlFor="password"
-              className="label-text"
-            >
+            <label htmlFor="password" className="label-text">
               Password
             </label>
             <div className="mt-1">
@@ -149,10 +143,7 @@ export default function LoginPage() {
           </div>
 
           <input type="hidden" name="redirectTo" value={redirectTo} />
-          <button
-            type="submit"
-            className="w-full btn btn-primary"
-          >
+          <button type="submit" className="btn btn-primary w-full">
             Log in
           </button>
           <div className="flex items-center justify-between">
@@ -161,12 +152,9 @@ export default function LoginPage() {
                 id="remember"
                 name="remember"
                 type="checkbox"
-                className="h-4 w-4 checkbox"
+                className="checkbox h-4 w-4"
               />
-              <label
-                htmlFor="remember"
-                className="ml-2 label-text"
-              >
+              <label htmlFor="remember" className="label-text ml-2">
                 Remember me
               </label>
             </div>
