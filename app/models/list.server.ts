@@ -51,6 +51,19 @@ export function getGiftList({
   });
 }
 
+export function requireEditableList({
+  userId,
+  listId,
+}: {
+  userId: User["id"];
+  listId: GiftList["id"];
+}) {
+  return prisma.giftList.findFirst({
+    select: { id: true },
+    where: { id: listId, userId },
+  });
+}
+
 export async function createGiftListItem({
   userId,
   listId,
@@ -60,16 +73,62 @@ export async function createGiftListItem({
   listId: GiftListItem["listId"];
   item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
 }) {
-  const listFound = await prisma.giftList.findFirst({
-    select: { id: true },
-    where: { id: listId, userId },
-  });
+  const listFound = await requireEditableList({ userId, listId });
   if (!listFound) return undefined;
 
   return await prisma.giftListItem.create({
     data: {
       ...item,
       listId,
+    },
+  });
+}
+
+export function getGiftListItem({
+  userId,
+  listId,
+  itemId,
+}: {
+  userId: User["id"];
+  listId: GiftListItem["listId"];
+  itemId: GiftListItem["id"];
+}) {
+  return prisma.giftListItem.findFirst({
+    select: {
+      id: true,
+      title: true,
+      url: true,
+      imageUrl: true,
+      details: true,
+    },
+    where: {
+      id: itemId,
+      listId: listId,
+      list: {
+        userId: userId,
+      },
+    },
+  });
+}
+
+export async function updateGiftListItem({
+  userId,
+  listId,
+  itemId,
+  item,
+}: {
+  userId: User["id"];
+  listId: GiftListItem["listId"];
+  itemId: GiftListItem["id"];
+  item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
+}) {
+  const listFound = await requireEditableList({ userId, listId });
+  if (!listFound) return undefined;
+
+  return await prisma.giftListItem.update({
+    where: { id: itemId },
+    data: {
+      ...item,
     },
   });
 }
