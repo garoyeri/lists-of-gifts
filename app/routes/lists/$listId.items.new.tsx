@@ -2,6 +2,7 @@ import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import Input from "~/components/input";
+import InputTextarea from "~/components/input-textarea";
 import { createGiftListItem } from "~/models/list.server";
 import { requireUserId } from "~/session.server";
 import { validateUrl } from "~/utils";
@@ -104,21 +105,10 @@ export default function NewListItem() {
                     field={actionData?.fields?.imageUrl} />
 
 
-                <div className="form-control">
-                    <label className="label" htmlFor="details">
-                        <span className="label-text text-lg">Details: </span>
-                    </label>
-                    <textarea name="details" id="details" rows={4} className="textarea textarea-bordered"
-                        aria-invalid={actionData?.errors?.details ? true : undefined}
-                        aria-errormessage={
-                            actionData?.errors?.details ? "details-error" : undefined}
-                    ></textarea>
-                    {actionData?.errors?.details && (
-                        <div className="pt-1 text-error" id="details-error">
-                            {actionData.errors.details}
-                        </div>
-                    )}
-                </div>
+                <InputTextarea
+                    id="details" label="Details:"
+                    error={actionData?.errors?.details}
+                    field={actionData?.fields?.details} />
 
                 <div className="text-left">
                     <button

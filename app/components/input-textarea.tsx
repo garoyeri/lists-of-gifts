@@ -1,5 +1,5 @@
-export default function Input({
-    field, error, label, id, size = "lg", required = false
+export default function InputTextarea({
+    field, error, label, id, size = "lg", required = false, rows = 4
 }: {
     field?: string;
     error?: string;
@@ -7,20 +7,22 @@ export default function Input({
     id: string;
     size?: string;
     required?: boolean;
+    rows?: number;
 }) {
     return (
         <div className="form-control">
             <label className="label" htmlFor={id}>
                 <span className={`label-text text-${size}`}>{label}</span>
             </label>
-            <input
+            <textarea
                 name={id} id={id}
-                defaultValue={field}
-                className={`input input-bordered input-${size}`}
+                rows={rows}
+                className="textarea textarea-bordered"
                 aria-invalid={error ? true : undefined}
-                aria-errormessage={error ? `${id}-error` : undefined}
+                aria-errormessage={error ? "details-error" : undefined}
                 required={required ?? undefined}
-            />
+            >{field}</textarea>
+
             {error && (
                 <div className="pt-1 text-error" id={`${id}-error`}>
                     {error}
