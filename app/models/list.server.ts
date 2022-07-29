@@ -2,7 +2,7 @@ import type { User, GiftList, GiftListItem } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export async function getGiftListsOwned({ userId }: { userId: User["id"] }) {
+export async function getGiftLists({ userId }: { userId: User["id"] }) {
   const permissions = await prisma.giftListPermissions.findMany({
     where: { userId },
     orderBy: {
@@ -76,19 +76,6 @@ export async function getGiftList({
   return permission?.list;
 }
 
-export function requireEditableList({
-  userId,
-  listId,
-}: {
-  userId: User["id"];
-  listId: GiftList["id"];
-}) {
-  return prisma.giftList.findFirst({
-    select: { id: true },
-    where: { id: listId, userId },
-  });
-}
-
 export function createGiftListItem({
   userId,
   listId,
@@ -145,7 +132,7 @@ export function getGiftListItem({
   });
 }
 
-export async function updateGiftListItem({
+export function updateGiftListItem({
   userId,
   listId,
   itemId,
@@ -172,3 +159,4 @@ export async function updateGiftListItem({
     },
   });
 }
+ 
