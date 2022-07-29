@@ -1,4 +1,5 @@
-import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import Input from "~/components/input";
@@ -34,11 +35,12 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const listId = params.listId;
   const itemId = params.itemId;
 
-  if (typeof listId !== "string" || typeof itemId !== "string") return badRequest({
-    formError: "Missing identifiers",
-  });
+  if (typeof listId !== "string" || typeof itemId !== "string")
+    return badRequest({
+      formError: "Missing identifiers",
+    });
 
-  const item = await getGiftListItem({userId, listId, itemId });
+  const item = await getGiftListItem({ userId, listId, itemId });
   return { item };
 };
 
@@ -54,7 +56,11 @@ export const action: ActionFunction = async ({ request, params }) => {
   const listId = params.listId;
   const itemId = params.itemId;
 
-  if (typeof title !== "string" || typeof listId !== "string" || typeof itemId !== "string") {
+  if (
+    typeof title !== "string" ||
+    typeof listId !== "string" ||
+    typeof itemId !== "string"
+  ) {
     return badRequest({ formError: "Form not submitted correctly" });
   }
 
@@ -137,7 +143,9 @@ export default function EditListItem() {
           id="imageUrl"
           label="Item Image Link:"
           error={actionData?.errors?.imageUrl}
-          field={actionData?.fields?.imageUrl ?? data.item.imageUrl ?? undefined}
+          field={
+            actionData?.fields?.imageUrl ?? data.item.imageUrl ?? undefined
+          }
         />
 
         <InputTextarea
