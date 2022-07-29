@@ -41,6 +41,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     });
 
   const item = await getGiftListItem({ userId, listId, itemId });
+  if (!item) {
+    return badRequest({
+      formError: "You're not allowed to edit this list",
+    });
+  }
   return { item };
 };
 

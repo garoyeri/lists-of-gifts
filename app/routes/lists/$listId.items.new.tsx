@@ -70,7 +70,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ errors, fields });
   }
 
-  await createGiftListItem({
+  const result = await createGiftListItem({
     userId,
     listId,
     item: {
@@ -80,6 +80,9 @@ export const action: ActionFunction = async ({ request, params }) => {
       details: (details as string) ?? null,
     },
   });
+  if (!result) {
+    return badRequest({ formError: "You're not allowed to update this list" });
+  }
 
   return redirect(`/lists/${listId}`);
 };
