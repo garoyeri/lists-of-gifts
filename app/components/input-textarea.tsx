@@ -24,7 +24,7 @@ export default function InputTextarea({
         name={id}
         id={id}
         rows={rows}
-        className="textarea textarea-bordered"
+        className={`textarea textarea-bordered text-${size}`}
         aria-invalid={error ? true : undefined}
         aria-errormessage={error ? "details-error" : undefined}
         required={required ?? undefined}
