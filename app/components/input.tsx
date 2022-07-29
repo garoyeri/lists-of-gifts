@@ -5,6 +5,7 @@ export default function Input({
   id,
   size = "lg",
   required = false,
+  className = "",
 }: {
   field?: string;
   error?: string;
@@ -12,9 +13,10 @@ export default function Input({
   id: string;
   size?: string;
   required?: boolean;
+  className?: string;
 }) {
   return (
-    <div className="form-control">
+    <div className={`form-control ${className}`}>
       <label className="label" htmlFor={id}>
         <span className={`label-text text-${size}`}>{label}</span>
       </label>
@@ -28,7 +30,7 @@ export default function Input({
         required={required ?? undefined}
       />
       {error && (
-        <div className="pt-1 text-error" id={`${id}-error`}>
+        <div className={`pt-1 text-error text-${size}`} id={`${id}-error`}>
           {error}
         </div>
       )}
