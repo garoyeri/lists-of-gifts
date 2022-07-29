@@ -4,15 +4,15 @@ import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
-import { getGiftLists } from "~/models/list.server";
+import { getGiftListsOwned } from "~/models/list.server";
 
 type LoaderData = {
-  giftLists: Awaited<ReturnType<typeof getGiftLists>>;
+  giftLists: Awaited<ReturnType<typeof getGiftListsOwned>>;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  const giftLists = await getGiftLists({ userId });
+  const giftLists = await getGiftListsOwned({ userId });
   return json<LoaderData>({ giftLists: giftLists });
 };
 
