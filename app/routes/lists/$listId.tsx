@@ -33,12 +33,17 @@ export default function ListDetailsPage() {
 
   return (
     <div>
-      <div className="mb-4 flex align-baseline">
-        <h3 className="w-full text-2xl font-bold">{data.list.title}{!isOwner ? ` (${data.user.email})` : undefined}</h3>
+      <div className="mb-4 flex align-baseline gap-2">
+        <h3 className="flex-1 text-2xl font-bold">{data.list.title}{!isOwner ? ` (${data.user.email})` : undefined}</h3>
         {isOwner ? (
-          <Link to="items/new" className="btn btn-primary">
-            New Item
-          </Link>
+          <>
+            <Link to="items/new" className="btn btn-primary flex-none">
+              + New Item
+            </Link>
+            <Link to="sharing" className="btn btn-primary flex-none">
+              Sharing
+            </Link>
+          </>
         ) : undefined}
       </div>
       <div className="container">
