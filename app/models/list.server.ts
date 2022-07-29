@@ -6,6 +6,7 @@ import type {
 } from "@prisma/client";
 
 import { prisma } from "~/db.server";
+import { getUserByEmail } from "./user.server";
 
 export async function getGiftLists({ userId }: { userId: User["id"] }) {
   return prisma.giftListPermissions.findMany({
@@ -228,7 +229,10 @@ export async function getGiftListSharing({
   return prisma.giftListPermissions.findMany({
     where: { listId },
     orderBy: { user: { email: "asc" } },
-    select: { user: { select: { email: true, id: true } } },
+    select: {
+      permission: true,
+      user: { select: { email: true, id: true } },
+    },
   });
 }
 
@@ -244,15 +248,18 @@ export async function shareGiftList({
   const found = await requireOwner({ userId, listId });
   if (!found) return undefined;
 
-  return prisma.user.update({
-    where: { email },
-    data: {
-      permittedLists: {
-        create: {
-          listId,
-          permission: "VIEWER",
-        },
-      },
+  const targetUser = await getUserByEmail(email);
+  if (!targetUser) return undefined;
+
+  return prisma.giftListPermissions.upsert({
+    create: {
+      userId: targetUser.id,
+      listId,
+      permission: "VIEWER",
+    },
+    update: {},
+    where: {
+      userId_listId: { userId: targetUser.id, listId },
     },
   });
 }
