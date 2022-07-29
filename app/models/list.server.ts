@@ -2,8 +2,8 @@ import type { User, GiftList, GiftListItem } from "@prisma/client";
 
 import { prisma } from "~/db.server";
 
-export async function getGiftLists({ userId }: { userId: User["id"] }) {
-  const permissions = await prisma.giftListPermissions.findMany({
+export function getGiftLists({ userId }: { userId: User["id"] }) {
+  return prisma.giftListPermissions.findMany({
     where: { userId },
     orderBy: {
       list: {
@@ -11,16 +11,20 @@ export async function getGiftLists({ userId }: { userId: User["id"] }) {
       },
     },
     select: {
+      permission: true,
       list: {
         select: {
           id: true,
           title: true,
         },
       },
+      user: {
+        select: {
+          email: true,
+        },
+      },
     },
   });
-
-  return permissions.map((p) => p.list);
 }
 
 export function createGiftList({
@@ -44,16 +48,22 @@ export function createGiftList({
   });
 }
 
-export async function getGiftList({
+export function getGiftList({
   userId,
   listId,
 }: {
   userId: User["id"];
   listId: GiftList["id"];
 }) {
-  const permission = await prisma.giftListPermissions.findUnique({
+  return prisma.giftListPermissions.findUnique({
     where: { userId_listId: { userId, listId } },
     select: {
+      permission: true,
+      user: {
+        select: {
+          email: true,
+        },
+      },
       list: {
         select: {
           id: true,
@@ -72,11 +82,28 @@ export async function getGiftList({
       },
     },
   });
-
-  return permission?.list;
 }
 
-export function createGiftListItem({
+export function requireEditing({
+  userId,
+  listId,
+}: {
+  userId: User["id"];
+  listId: GiftList["id"];
+}) {
+  return prisma.giftListPermissions.findFirst({
+    where: {
+      userId,
+      listId,
+      permission: {
+        in: ["OWNER", "EDITOR"],
+      },
+    },
+    select: { permission: true },
+  });
+}
+
+export async function createGiftListItem({
   userId,
   listId,
   item,
@@ -85,7 +112,10 @@ export function createGiftListItem({
   listId: GiftListItem["listId"];
   item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
 }) {
-  return prisma.giftListPermissions.update({
+  const found = await requireEditing({ userId, listId });
+  if (!found) return undefined;
+
+  return await prisma.giftListPermissions.update({
     where: { userId_listId: { userId, listId } },
     data: {
       list: {
@@ -132,7 +162,7 @@ export function getGiftListItem({
   });
 }
 
-export function updateGiftListItem({
+export async function updateGiftListItem({
   userId,
   listId,
   itemId,
@@ -143,6 +173,9 @@ export function updateGiftListItem({
   itemId: GiftListItem["id"];
   item: Pick<GiftListItem, "title" | "url" | "imageUrl" | "details">;
 }) {
+  const found = await requireEditing({ userId, listId });
+  if (!found) return undefined;
+
   return prisma.giftListPermissions.update({
     where: { userId_listId: { userId, listId } },
     data: {
@@ -159,4 +192,3 @@ export function updateGiftListItem({
     },
   });
 }
- 

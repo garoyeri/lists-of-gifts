@@ -7,7 +7,7 @@ import { getGiftList } from "~/models/list.server";
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {
-  list: NonNullable<Awaited<ReturnType<typeof getGiftList>>>;
+  data: NonNullable<Awaited<ReturnType<typeof getGiftList>>>;
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -24,29 +24,32 @@ export const loader: LoaderFunction = async ({ request, params }) => {
     });
   }
 
-  return json<LoaderData>({ list });
+  return json<LoaderData>({ data: list });
 };
 
 export default function ListDetailsPage() {
-  const data = useLoaderData<LoaderData>();
+  const { data } = useLoaderData<LoaderData>();
+  const isOwner = data.permission === "OWNER";
 
   return (
     <div>
       <div className="mb-4 flex align-baseline">
-        <h3 className="w-full text-2xl font-bold">{data.list.title}</h3>
-        <Link to="items/new" className="btn btn-primary">
-          New Item
-        </Link>
+        <h3 className="w-full text-2xl font-bold">{data.list.title}{!isOwner ? ` (${data.user.email})` : undefined}</h3>
+        {isOwner ? (
+          <Link to="items/new" className="btn btn-primary">
+            New Item
+          </Link>
+        ) : undefined}
       </div>
       <div className="container">
         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {data.list.items.map(item => {
+          {data.list.items.map((item) => {
             return (
               <GiftListItemView
                 key={item.id}
                 item={item}
-                isOwner={true}
-              />          
+                isOwner={isOwner}
+              />
             );
           })}
         </div>

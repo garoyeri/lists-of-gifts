@@ -51,11 +51,19 @@ model GiftListItem {
   details  String? @db.VarChar(8192)
 }
 
+enum Permission {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
 model GiftListPermissions {
   user   User     @relation(fields: [userId], references: [id])
   userId String   @db.VarChar(255)
   list   GiftList @relation(fields: [listId], references: [id])
   listId String   @db.VarChar(255)
+
+  permission Permission @default(OWNER)
 
   @@id([userId, listId])
 }

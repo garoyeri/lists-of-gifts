@@ -13,7 +13,7 @@ type LoaderData = {
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await requireUserId(request);
   const giftLists = await getGiftLists({ userId });
-  return json<LoaderData>({ giftLists: giftLists });
+  return json<LoaderData>({ giftLists });
 };
 
 export default function ListsPage() {
@@ -48,7 +48,7 @@ export default function ListsPage() {
             <p className="text-l block py-1 px-4">No lists yet</p>
           ) : (
             <ol>
-              {data.giftLists.map((list) => (
+              {data.giftLists.filter(p => p.permission === "OWNER").map(({list}) => (
                 <li key={list.id}>
                   <NavLink
                     className={({ isActive }) =>
@@ -64,6 +64,22 @@ export default function ListsPage() {
           )}
 
           <div className="block border-t p-4 text-xl">Shared lists</div>
+
+          <ol>
+              {data.giftLists.filter(p => p.permission !== "OWNER").map(({list}) => (
+                <li key={list.id}>
+                  <NavLink
+                    className={({ isActive }) =>
+                      `text-l block py-1 px-4 ${isActive ? "bg-white" : ""}`
+                    }
+                    to={list.id}
+                  >
+                    📃 {list.title}
+                  </NavLink>
+                </li>
+              ))}
+            </ol>
+
         </div>
 
         <div className="flex-1 overflow-y-scroll p-6">
