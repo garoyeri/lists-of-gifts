@@ -8,6 +8,17 @@ import type {
 import { prisma } from "~/db.server";
 import { getUserByEmail } from "./user.server";
 
+/**
+ * Gets the gift lists that are accessible to the given user.
+ * 
+ * @param userId The ID of the user whose gift lists to retrieve. 
+ * @returns A list of gift list permissions, empty list if none available.
+ * 
+ * @remarks
+ * Permissions can be of `OWNER` or `VIEWER` type (`EDITOR` isn't used yet).
+ * To see what lists belong to the user, find the `OWNER` roles. Shared lists
+ * would be either `VIEWER` or `EDITOR`.
+ */
 export async function getGiftLists({ userId }: { userId: User["id"] }) {
   return prisma.giftListPermissions.findMany({
     where: { userId },
@@ -33,6 +44,17 @@ export async function getGiftLists({ userId }: { userId: User["id"] }) {
   });
 }
 
+/**
+ * Create a new gift list owned by the specified user.
+ * 
+ * @param userId The ID of the user who will own the new list.
+ * @param title The title to use for the list. 
+ * @returns A newly created gift list.
+ * 
+ * @remarks
+ * Default permission is "OWNER" when creating a gift list, so
+ * we don't need to specify the value.
+ */
 export async function createGiftList({
   userId,
   title,
@@ -49,6 +71,14 @@ export async function createGiftList({
   });
 }
 
+/**
+ * Get the details for a specific gift list.
+ * 
+ * @param userId The ID of the user requesting the gift list.
+ * @param listId The ID of the list being requested.
+ * @returns The specified list permission with its list contents,
+ * or undefined if not found or not allowed.
+ */
 export async function getGiftList({
   userId,
   listId,
@@ -84,6 +114,15 @@ export async function getGiftList({
   });
 }
 
+/**
+ * Assert that at least an editing permission is required for
+ * the specified user on the specified list.
+ * 
+ * @param userId The ID of the user requesting to edit a list.
+ * @param listId The ID of the list requesting to be edited.
+ * @returns The permission level of the user on the list, or undefined
+ * if not found or not permitted.
+ */
 export async function requireEditing({
   userId,
   listId,
@@ -103,6 +142,15 @@ export async function requireEditing({
   });
 }
 
+/**
+ * Assert that at least an owner permission is required for
+ * the specified user on the specified list.
+ * 
+ * @param userId The ID of the user requesting to administer a list.
+ * @param listId The ID of the list requesting to be administered.
+ * @returns The permission level of the user on the list, or undefined
+ * if not found or not permitted.
+ */
 export async function requireOwner({
   userId,
   listId,
@@ -120,6 +168,14 @@ export async function requireOwner({
   });
 }
 
+/**
+ * Create a new item in the gift list.
+ * 
+ * @param userId The ID of the user adding the new item.
+ * @param listId The ID of the list to add the item to.
+ * @param item The item details being added. 
+ * @returns The added item, or undefined if not found or allowed.
+ */
 export async function createGiftListItem({
   userId,
   listId,
@@ -148,6 +204,15 @@ export async function createGiftListItem({
   });
 }
 
+/**
+ * Get a gift list item detail.
+ * 
+ * @param userId The ID of the user requesting the item.
+ * @param listId The ID of the list where the item is located.
+ * @param itemId The ID of the item to be gotten. 
+ * @returns The item details or undefined it it is not found or
+ * the user doesn't have any permissions on the list.
+ */
 export async function getGiftListItem({
   userId,
   listId,
@@ -179,6 +244,14 @@ export async function getGiftListItem({
   });
 }
 
+/**
+ * Edit a gift list item.
+ * @param userId The ID of the user editing the item
+ * @param listId The ID of the list containing the item
+ * @param itemId The ID of the item being edited
+ * @param item The changes ot the item. Undefined keys will be ignored.
+ * @returns The updated item or undefined if not found or permitted to edit.
+ */
 export async function updateGiftListItem({
   userId,
   listId,
@@ -210,6 +283,13 @@ export async function updateGiftListItem({
   });
 }
 
+/**
+ * Get the sharing details for a gift list.
+ * @param userId The ID of the user requesting the share list
+ * @param listId The ID of the list
+ * @returns The sharing permissions for the gift list, or
+ * undefined if not permitted (not OWNER permission).
+ */
 export async function getGiftListSharing({
   userId,
   listId,
@@ -230,6 +310,14 @@ export async function getGiftListSharing({
   });
 }
 
+/**
+ * Share a gift list with another user.
+ * @param userId The ID of the user sharing the list
+ * @param listId The ID of the list to be shared
+ * @param email The email address of the user to share the list with
+ * @returns The newly created permission of the list, or undefined if
+ * not found or permitted.
+ */
 export async function shareGiftList({
   userId,
   listId,
@@ -258,6 +346,17 @@ export async function shareGiftList({
   });
 }
 
+/**
+ * Remove a user from being shared with the list.
+ * @param userId The ID of the user requesting to unshare the list
+ * @param targetUserId The ID of the user whose permission is being removed
+ * @param listId The ID of the list whose access is meant to be removed 
+ * @returns The deleted permission, or undefined if not found or permitted
+ * 
+ * @remarks
+ * OWNER permission is required to unshare a list, but you can't remove
+ * your own permission on the list (effectively orphaning it).
+ */
 export async function unshareGiftList({
   userId,
   targetUserId,
