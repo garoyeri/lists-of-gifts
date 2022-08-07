@@ -45,11 +45,6 @@ export async function createGiftList({
           userId,
         },
       },
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
     },
   });
 }
