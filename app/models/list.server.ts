@@ -74,7 +74,6 @@ export async function getGiftList({
         select: {
           id: true,
           title: true,
-          userId: true,
           items: {
             select: {
               id: true,

@@ -15,7 +15,6 @@ model User {
   updatedAt DateTime @updatedAt
 
   password       Password?
-  myLists        GiftList[]
   permittedLists GiftListPermissions[]
 }
 
@@ -32,9 +31,6 @@ model GiftList {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String @db.VarChar(255)
 
   items       GiftListItem[]
   permissions GiftListPermissions[]
