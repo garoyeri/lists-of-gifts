@@ -1,6 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useTransition } from "@remix-run/react";
 import { createGiftList } from "~/models/list.server";
 import { requireUserId } from "~/session.server";
 
@@ -29,6 +29,9 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewListPage() {
   const actionData = useActionData() as ActionData;
+  const transition = useTransition();
+  const isCreating = Boolean(transition.submission);
+
   return (
     <Form method="post" className="flex w-full flex-col gap-8">
       <div className="form-control">
@@ -52,8 +55,8 @@ export default function NewListPage() {
       </div>
 
       <div className="text-left">
-        <button type="submit" className="btn btn-primary btn-lg">
-          Save
+        <button type="submit" className="btn btn-primary btn-lg" disabled={isCreating}>
+          {isCreating ? `Saving...` : `Save`}
         </button>
       </div>
     </Form>
