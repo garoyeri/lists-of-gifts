@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import GiftListItemView from "~/components/list-item-view";
 import { getGiftList } from "~/models/list.server";
@@ -57,6 +57,22 @@ export default function ListDetailsPage() {
               />
             );
           })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content text-center">
+        <div className="max-w-md">
+          <h1 className="text-5xl font-bold">Something went wrong</h1>
+          <p className="py-6">${caught.status} ${caught.statusText}</p>
+          <p className="py-6">Go back and try that again.</p>
         </div>
       </div>
     </div>
