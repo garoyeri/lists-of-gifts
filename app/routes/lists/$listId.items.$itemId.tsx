@@ -1,7 +1,7 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useCatch, useLoaderData } from "@remix-run/react";
 import Input from "~/components/input";
 import InputTextarea from "~/components/input-textarea";
 import { getGiftListItem, updateGiftListItem } from "~/models/list.server";
@@ -36,15 +36,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const itemId = params.itemId;
 
   if (typeof listId !== "string" || typeof itemId !== "string")
-    return badRequest({
-      formError: "Missing identifiers",
-    });
+    throw new Response("Missing identifiers", { status: 400 });
 
   const item = await getGiftListItem({ userId, listId, itemId });
   if (!item) {
-    return badRequest({
-      formError: "You're not allowed to edit this list",
-    });
+    throw new Response(
+      "Not found (or you're not supposed to be editing this)",
+      { status: 404 }
+    );
   }
   return { item };
 };
@@ -133,7 +132,7 @@ export default function EditListItem() {
           id="title"
           label="Item Summary:"
           error={actionData?.errors?.title}
-          field={actionData?.fields?.title ?? data.item.title ?? undefined}
+          field={actionData?.fields?.title ?? data.item?.title ?? undefined}
           required={true}
         />
 
@@ -141,7 +140,7 @@ export default function EditListItem() {
           id="url"
           label="Item Link:"
           error={actionData?.errors?.url}
-          field={actionData?.fields?.url ?? data.item.url ?? undefined}
+          field={actionData?.fields?.url ?? data.item?.url ?? undefined}
         />
 
         <Input
@@ -149,7 +148,7 @@ export default function EditListItem() {
           label="Item Image Link:"
           error={actionData?.errors?.imageUrl}
           field={
-            actionData?.fields?.imageUrl ?? data.item.imageUrl ?? undefined
+            actionData?.fields?.imageUrl ?? data.item?.imageUrl ?? undefined
           }
         />
 
@@ -157,7 +156,7 @@ export default function EditListItem() {
           id="details"
           label="Details:"
           error={actionData?.errors?.details}
-          field={actionData?.fields?.details ?? data.item.details ?? undefined}
+          field={actionData?.fields?.details ?? data.item?.details ?? undefined}
         />
 
         <div className="text-left">
@@ -167,5 +166,25 @@ export default function EditListItem() {
         </div>
       </Form>
     </>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content text-center">
+        <div className="max-w-md">
+          <h1 className="text-5xl font-bold text-error">
+            Something went wrong 😢
+          </h1>
+          <p className="py-6 text-xl">
+            Error {caught.status}: {caught.data}
+          </p>
+          <p className="py-6">Go back and try that again.</p>
+        </div>
+      </div>
+    </div>
   );
 }

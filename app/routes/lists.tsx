@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
+import { Form, Link, NavLink, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
@@ -86,6 +86,26 @@ export default function ListsPage() {
           <Outlet />
         </div>
       </main>
+    </div>
+  );
+}
+
+export function CatchBoundary() {
+  const caught = useCatch();
+
+  return (
+    <div className="hero min-h-screen bg-base-200">
+      <div className="hero-content text-center">
+        <div className="max-w-md">
+          <h1 className="text-5xl font-bold text-error">
+            Something went wrong (lists) 😢
+          </h1>
+          <p className="py-6 text-xl">
+            Error {caught.status}: {caught.data}
+          </p>
+          <p className="py-6">Go back and try that again.</p>
+        </div>
+      </div>
     </div>
   );
 }

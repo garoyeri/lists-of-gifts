@@ -1,6 +1,6 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { Link, useCatch, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 import GiftListItemView from "~/components/list-item-view";
 import { getGiftList } from "~/models/list.server";
@@ -33,8 +33,12 @@ export default function ListDetailsPage() {
 
   return (
     <div>
-      <div className="mb-4 flex align-baseline gap-2">
-        <h3 className="flex-1 text-2xl font-bold">{data.list.title}{!isOwner ? ` (${data.user.email})` : undefined}</h3>
+      <Outlet />
+      <div className="mb-4 flex gap-2 align-baseline">
+        <h3 className="flex-1 text-2xl font-bold">
+          {data.list.title}
+          {!isOwner ? ` (${data.user.email})` : undefined}
+        </h3>
         {isOwner ? (
           <>
             <Link to="items/new" className="btn btn-primary flex-none">
@@ -50,11 +54,7 @@ export default function ListDetailsPage() {
         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {data.list.items.map((item) => {
             return (
-              <GiftListItemView
-                key={item.id}
-                item={item}
-                isOwner={isOwner}
-              />
+              <GiftListItemView key={item.id} item={item} isOwner={isOwner} />
             );
           })}
         </div>
@@ -70,8 +70,12 @@ export function CatchBoundary() {
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content text-center">
         <div className="max-w-md">
-          <h1 className="text-5xl font-bold">Something went wrong</h1>
-          <p className="py-6">${caught.status} ${caught.statusText}</p>
+          <h1 className="text-5xl font-bold text-error">
+            Something went wrong 😢
+          </h1>
+          <p className="py-6 text-xl">
+            Error {caught.status}: {caught.data}
+          </p>
           <p className="py-6">Go back and try that again.</p>
         </div>
       </div>
